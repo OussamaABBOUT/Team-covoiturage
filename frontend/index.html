@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Covoiturage - Accueil</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container header__row">
+      <a class="logo" href="index.html">Covoiturage</a>
+      <nav class="nav">
+        <a href="search.html">Rechercher</a>
+        <a href="publish.html">Publier</a>
+        <a href="login.html">Connexion</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero__grid">
+        <div>
+          <h1>Trouve un trajet, partage les frais.</h1>
+          <p>Réserve facilement un covoiturage près de chez toi.</p>
+          <div class="hero__actions">
+            <a class="btn" href="search.html">Rechercher un trajet</a>
+            <a class="btn btn--outline" href="publish.html">Publier un trajet</a>
+          </div>
+        </div>
+
+        <form class="card" action="search.html">
+          <h2>Recherche rapide</h2>
+          <label>Départ
+            <input name="from" placeholder="Ex: Montréal" required />
+          </label>
+          <label>Arrivée
+            <input name="to" placeholder="Ex: Québec" required />
+          </label>
+          <label>Date
+            <input type="date" name="date" required />
+          </label>
+          <button class="btn" type="submit">Chercher</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="container features">
+      <div class="feature card">
+        <h3>Économique</h3>
+        <p>Partage des frais de carburant.</p>
+      </div>
+      <div class="feature card">
+        <h3>Écologique</h3>
+        <p>Moins de voitures, moins d’émissions.</p>
+      </div>
+      <div class="feature card">
+        <h3>Sécurisé</h3>
+        <p>Profils + infos conducteur.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__row">
+      <span>© 2026 Covoiturage</span>
+      <span>Contact • Mentions</span>
+    </div>
+  </footer>
+</body>
+</html>
