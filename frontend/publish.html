@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Covoiturage - Recherche</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container header__row">
+      <a class="logo" href="index.html">Covoiturage</a>
+      <nav class="nav">
+        <a class="active" href="search.html">Rechercher</a>
+        <a href="publish.html">Publier</a>
+        <a href="login.html">Connexion</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Rechercher un trajet</h1>
+
+    <form class="card form-grid" id="searchForm">
+      <label>Départ
+        <input name="from" id="from" placeholder="Ex: Ottawa" />
+      </label>
+      <label>Arrivée
+        <input name="to" id="to" placeholder="Ex: La Cité" />
+      </label>
+      <label>Date
+        <input type="date" name="date" id="date" />
+      </label>
+      <button class="btn" type="submit">Rechercher</button>
+    </form>
+
+    <section class="card">
+      <h2>Résultats</h2>
+      <div id="results" class="list"></div>
+    </section>
+  </main>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

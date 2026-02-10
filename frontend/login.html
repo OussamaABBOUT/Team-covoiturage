@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Covoiturage - Connexion</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container header__row">
+      <a class="logo" href="index.html">Covoiturage</a>
+      <nav class="nav">
+        <a href="search.html">Rechercher</a>
+        <a href="publish.html">Publier</a>
+        <a class="active" href="login.html">Connexion</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Connexion</h1>
+
+    <form class="card form-grid" id="loginForm">
+      <label>Courriel institutionnel
+        <input type="email" name="email" id="email" placeholder="prenom.nom@lacitec.on.ca" required />
+      </label>
+      <label>Mot de passe
+        <input type="password" name="password" id="password" required />
+      </label>
+      <button class="btn" type="submit">Se connecter</button>
+      <p class="hint" id="loginMsg"></p>
+    </form>
+  </main>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

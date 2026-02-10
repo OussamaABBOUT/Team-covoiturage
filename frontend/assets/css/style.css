@@ -1,0 +1,23 @@
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Segoe UI,Arial;background:#fff;color:#111}
+.container{max-width:1100px;margin:0 auto;padding:0 16px}
+
+.header{border-bottom:1px solid #eee;position:sticky;top:0;background:#fff}
+.header__row{height:64px;display:flex;align-items:center;justify-content:space-between}
+.logo{text-decoration:none;color:#111;font-weight:800}
+.nav a{text-decoration:none;color:#111;opacity:.8;margin-left:14px}
+.nav a:hover{opacity:1}
+.nav a.active{opacity:1;font-weight:700}
+
+.hero{display:grid;gap:16px;grid-template-columns:1.2fr .8fr;align-items:start;padding:24px 0}
+.hero__left h1{margin:0 0 8px 0;font-size:34px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+
+.card{border:1px solid #eee;border-radius:14px;padding:16px;box-shadow:0 1px 8px rgba(0,0,0,.04);background:#fff}
+label{display:block;font-size:14px;margin:10px 0}
+input{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;margin-top:6px}
+
+.btn{border:1px solid #111;background:#111;color:#fff;border-radius:12px;padding:10px 14px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn--outline{background:transparent;color:#111}
+
+.

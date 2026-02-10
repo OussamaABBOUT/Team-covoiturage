@@ -18,46 +18,44 @@
     </div>
   </header>
 
-  <main>
+  <main class="container">
     <section class="hero">
-      <div class="container hero__grid">
-        <div>
-          <h1>Trouve un trajet, partage les frais.</h1>
-          <p>Réserve facilement un covoiturage près de chez toi.</p>
-          <div class="hero__actions">
-            <a class="btn" href="search.html">Rechercher un trajet</a>
-            <a class="btn btn--outline" href="publish.html">Publier un trajet</a>
-          </div>
+      <div class="hero__left">
+        <h1>Partage ton trajet, réduis tes coûts.</h1>
+        <p>Plateforme de covoiturage pour la communauté du collège.</p>
+        <div class="actions">
+          <a class="btn" href="search.html">Rechercher un trajet</a>
+          <a class="btn btn--outline" href="publish.html">Publier un trajet</a>
         </div>
-
-        <form class="card" action="search.html">
-          <h2>Recherche rapide</h2>
-          <label>Départ
-            <input name="from" placeholder="Ex: Montréal" required />
-          </label>
-          <label>Arrivée
-            <input name="to" placeholder="Ex: Québec" required />
-          </label>
-          <label>Date
-            <input type="date" name="date" required />
-          </label>
-          <button class="btn" type="submit">Chercher</button>
-        </form>
       </div>
+
+      <form class="card" action="search.html" method="get">
+        <h2>Recherche rapide</h2>
+        <label>Départ
+          <input name="from" placeholder="Ex: Ottawa" required />
+        </label>
+        <label>Arrivée
+          <input name="to" placeholder="Ex: La Cité" required />
+        </label>
+        <label>Date
+          <input type="date" name="date" required />
+        </label>
+        <button class="btn" type="submit">Chercher</button>
+      </form>
     </section>
 
-    <section class="container features">
-      <div class="feature card">
-        <h3>Économique</h3>
-        <p>Partage des frais de carburant.</p>
+    <section class="grid3">
+      <div class="card">
+        <h3>Conducteur</h3>
+        <p>Propose un trajet et gère les demandes.</p>
       </div>
-      <div class="feature card">
-        <h3>Écologique</h3>
-        <p>Moins de voitures, moins d’émissions.</p>
+      <div class="card">
+        <h3>Passager</h3>
+        <p>Recherche un trajet compatible et réserve.</p>
       </div>
-      <div class="feature card">
-        <h3>Sécurisé</h3>
-        <p>Profils + infos conducteur.</p>
+      <div class="card">
+        <h3>Sécurité</h3>
+        <p>Accès sécurisé + profils utilisateurs.</p>
       </div>
     </section>
   </main>
@@ -65,8 +63,10 @@
   <footer class="footer">
     <div class="container footer__row">
       <span>© 2026 Covoiturage</span>
-      <span>Contact • Mentions</span>
+      <span>Campus Ottawa</span>
     </div>
   </footer>
+
+  <script src="assets/js/app.js"></script>
 </body>
 </html>
