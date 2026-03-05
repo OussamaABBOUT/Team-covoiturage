@@ -41,18 +41,13 @@ export default function RegisterPage() {
           type="text"
           value={generatedEmail}
           readOnly
-          placeholder="Ex: 2736164@collegelacite.ca"
+          placeholder="Ex: 2736058@collegelacite.ca"
         />
 
         <label>Rôle</label>
         <select
           value={role}
           onChange={(e) => setRole(e.target.value)}
-          style={{
-            padding: 12,
-            borderRadius: 14,
-            border: "1px solid var(--border)",
-          }}
         >
           <option value="">-- Choisir un rôle --</option>
           <option value="PASSAGER">Passager</option>

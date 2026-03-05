@@ -26,12 +26,9 @@ export default function LoginPage() {
   return (
     <section className="auth">
       <h2>Connexion</h2>
-      <p style={{ margin: "6px 0 0", color: "var(--muted)", fontWeight: 600 }}>
-        Entrez votre ID collège.
-      </p>
 
       <div className="form">
-        
+      <label>ID collège</label>
         <input
           type="text"
           value={collegeId}
@@ -44,7 +41,7 @@ export default function LoginPage() {
           type="text"
           value={generatedEmail}
           readOnly
-          placeholder="Ex: 2736164@collegelacite.ca"
+          placeholder="Ex: 2736058@collegelacite.ca"
         />
 
         <label>Mot de passe</label>
@@ -64,12 +61,12 @@ export default function LoginPage() {
           Se connecter
         </button>
 
-        <div className="card" style={{ marginTop: 12 }}>
-          <h3 style={{ margin: 0 }}>Pas encore de compte ?</h3>
-          <p style={{ margin: "6px 0 0", color: "var(--muted)" }}>
+        <div className="card" >
+          <h3>Pas encore de compte ?</h3>
+          <p>
             Créez votre profil avec votre ID collège.
           </p>
-          <div style={{ marginTop: 10 }}>
+          <div>
             <a className="btnSecondary" href="/register">
               Créer un profil
             </a>
