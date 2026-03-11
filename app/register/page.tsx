@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+
+ // verifier les champs si ils sont valides .
 function sanitizeCollegeId(raw: string) {
   return raw.replace(/\D/g, "");
 }

@@ -1,0 +1,13 @@
+app/
++- components/
+¦  +- Footer.tsx
+¦  +- Navbar.tsx
++- dashboard/
+¦  +- page.tsx
++- login/
+¦  +- page.tsx
++- register/
+¦  +- page.tsx
++- globals.css
++- layout.tsx
++- page.tsx
