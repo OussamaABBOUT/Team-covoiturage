@@ -2,6 +2,7 @@ import Link from "next/link";
 
 export default function DashboardPage() {
  
+  // données temporaires , 
   const stats = {
     tripsCreated: 2,
     reservations: 3,
@@ -18,12 +19,14 @@ export default function DashboardPage() {
           </p>
         </div>
 
+          {/* Navigation rapide */}
         <div>
           <Link href="/register" className="btnSecondary">Créer profil</Link>
           <Link href="/login" className="btnSecondary">Connexion</Link>
         </div>
       </div>
 
+        {/* Statistiques principales */}
       <div className="kpiGrid">
         <div className="kpi">
           <div className="num">{stats.tripsCreated}</div>

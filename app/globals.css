@@ -309,3 +309,234 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================= */
+/* SIGNUP (Yassir-like layout)   */
+/* ============================= */
+
+.signupLayout{
+  min-height: calc(100vh - 72px);
+  display:grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.signupLeft{
+  padding: 40px 20px;
+}
+
+.signupBrand{
+  display:inline-block;
+  font-weight: 900;
+  margin-bottom: 18px;
+}
+
+.signupLeft h1{
+  font-size: 40px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.signupSubtitle{
+  color:#64748b;
+  line-height: 1.5;
+  max-width: 60ch;
+  margin-bottom: 22px;
+}
+
+.signupSteps{
+  display:flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 620px;
+}
+
+.step{
+  display:flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.stepNum{
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 900;
+  background: rgba(0,200,150,0.14);
+  color: #0f172a;
+  flex: 0 0 auto;
+}
+
+.step h3{
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+
+.step p{
+  color:#64748b;
+  line-height: 1.4;
+  font-size: 14px;
+}
+
+.signupRight{
+  padding: 40px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.signupCard{
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.signupCardHeader h2{
+  margin-bottom: 8px;
+}
+
+.signupCardHeader p{
+  color:#64748b;
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+
+.signupTerms{
+  margin-top: 10px;
+  color:#64748b;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.signupAlt{
+  margin-top: 14px;
+  display:flex;
+  gap: 10px;
+  align-items:center;
+  justify-content: space-between;
+}
+
+@media (max-width: 900px){
+  .signupLayout{
+    grid-template-columns: 1fr;
+  }
+  .signupLeft h1{
+    font-size: 32px;
+  }
+}
+/* ============================= */
+/* SIGNIN (Yassir-like layout)   */
+/* ============================= */
+
+.authLayout{
+  min-height: calc(100vh - 72px);
+  display:grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.authLeft{
+  padding: 40px 20px;
+}
+
+.authBrand{
+  display:inline-block;
+  font-weight: 900;
+  margin-bottom: 18px;
+}
+
+.authLeft h1{
+  font-size: 40px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.authSubtitle{
+  color:#64748b;
+  line-height: 1.5;
+  max-width: 60ch;
+  margin-bottom: 18px;
+}
+
+.authInfo{
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 620px;
+}
+
+.infoRow{
+  display:flex;
+  gap: 10px;
+  align-items:flex-start;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  color:#334155;
+}
+
+.dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #00c896;
+  box-shadow: 0 0 0 4px rgba(0,200,150,0.12);
+  margin-top: 6px;
+  flex: 0 0 auto;
+}
+
+.authRight{
+  padding: 40px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.authCard{
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.authCardHeader h2{
+  margin-bottom: 8px;
+}
+
+.authCardHeader p{
+  color:#64748b;
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+
+.authAlt{
+  margin-top: 14px;
+  display:flex;
+  gap: 10px;
+  align-items:center;
+  justify-content: space-between;
+}
+
+@media (max-width: 900px){
+  .authLayout{
+    grid-template-columns: 1fr;
+  }
+  .authLeft h1{
+    font-size: 32px;
+  }
+}

@@ -1,6 +1,9 @@
 import Link from "next/link";
 
 export default function HomePage() {
+
+  // Page d’accueil :  
+
   return (
     <div className="container">
       <section className="hero">
@@ -10,13 +13,14 @@ export default function HomePage() {
             Trouvez un trajet, proposez le vôtre et réservez en quelques clics.
             Une interface claire, sans pages inutiles.
           </p>
-
+           {/* Section principal */}
           <div className="heroActions">
             <Link href="/register" className="btnPrimary">Créer un profil</Link>
             <Link href="/login" className="btnSecondary">Se connecter</Link>
             <Link href="/dashboard" className="btnSecondary">Dashboard</Link>
           </div>
-
+             
+             {/* Section carte */}
           <div className="section">
             <div className="card">
               <h3>Recherche rapide</h3>
