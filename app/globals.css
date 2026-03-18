@@ -540,3 +540,214 @@ a {
     font-size: 32px;
   }
 }
+
+/* ============================= */
+/* DASHBOARD PAGE                */
+/* ============================= */
+
+.dashboardPage {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboardHeader {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
+
+.dashboardHeader h1 {
+  font-size: 32px;
+  line-height: 1.1;
+  margin-bottom: 10px;
+  color: #0f172a;
+}
+
+.dashboardHeader p {
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.roleBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(0, 200, 150, 0.12);
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 800;
+  border: 1px solid rgba(0, 200, 150, 0.2);
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.dashboardCard {
+  display: block;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 22px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
+
+.dashboardCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 200, 150, 0.35);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+}
+
+.dashboardCard h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #0f172a;
+}
+
+.dashboardCard p {
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* ============================= */
+/* SHARED PAGE LAYOUT            */
+/* ============================= */
+
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.pageHeader {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
+
+.pageHeader h1 {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.pageHeader p {
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.formCard,
+.searchCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.formGrid label,
+.formCard label,
+.searchCard label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #334155;
+}
+
+.resultsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.resultCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
+
+.resultCard h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.resultCard p {
+  color: #475569;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.historySection {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.historySection h2 {
+  font-size: 22px;
+  color: #0f172a;
+}
+
+.errorMessage {
+  margin-top: 10px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.successMessage {
+  margin-top: 10px;
+  color: #16a34a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ============================= */
+/* RESPONSIVE                    */
+/* ============================= */
+
+@media (max-width: 900px) {
+  .dashboardGrid,
+  .resultsGrid,
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboardHeader,
+  .pageHeader,
+  .formCard,
+  .searchCard,
+  .dashboardCard,
+  .resultCard {
+    padding: 18px;
+  }
+
+  .dashboardHeader h1,
+  .pageHeader h1 {
+    font-size: 26px;
+  }
+
+  .dashboardCard h2 {
+    font-size: 18px;
+  }
+}

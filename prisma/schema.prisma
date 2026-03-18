@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  collegeId    String        @unique
+  email        String        @unique
+  role         Role
+  passwordHash String
+  isActive     Boolean       @default(true)
+
+  trips        Trip[]        @relation("DriverTrips")
+  reservations Reservation[] @relation("PassengerReservations")
+}
+
+model Trip {
+  id             Int           @id @default(autoincrement())
+  departure      String
+  destination    String
+  date           DateTime
+  seats          Int
+  availableSeats Int
+
+  driverId       Int
+  driver         User          @relation("DriverTrips", fields: [driverId], references: [id])
+
+  reservations   Reservation[]
+}
+
+model Reservation {
+  id          Int               @id @default(autoincrement())
+  status      ReservationStatus @default(PENDING)
+  createdAt   DateTime          @default(now())
+
+  tripId      Int
+  passengerId Int
+
+  trip        Trip              @relation(fields: [tripId], references: [id])
+  passenger   User              @relation("PassengerReservations", fields: [passengerId], references: [id])
+
+  @@unique([tripId, passengerId])
+}
+
+enum Role {
+  PASSAGER
+  CONDUCTEUR
+  ADMIN
+}
+
+enum ReservationStatus {
+  PENDING
+  ACCEPTED
+  REFUSED
+}

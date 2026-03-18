@@ -1,81 +1,104 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { apiPost } from "@/lib/api";
 
-// Nettoie l’ID : conserve uniquement les chiffres
 function sanitizeCollegeId(raw: string) {
   return raw.replace(/\D/g, "");
 }
 
-// Validation de l' ID collège, doit avoir exactement 7 chiffres
 function isValidCollegeId(id: string) {
   return /^\d{7}$/.test(id);
 }
 
-// 
 export default function RegisterPage() {
+  const router = useRouter();
+
   const [collegeId, setCollegeId] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("PASSAGER");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const cleanId = sanitizeCollegeId(collegeId);
 
-  // Génère automatiquement l’email à partir de l’ID 
   const generatedEmail = useMemo(() => {
     if (!isValidCollegeId(cleanId)) return "";
     return `${cleanId}@collegelacite.ca`;
   }, [cleanId]);
 
-  // Verifié si l' ID est valide pour autorisé le bouton
-  const isFormValid = isValidCollegeId(cleanId) && role;
+  const canRegister =
+    isValidCollegeId(cleanId) &&
+    password.trim().length >= 6 &&
+    confirmPassword.trim().length >= 6 &&
+    password === confirmPassword;
+
+  async function handleRegister() {
+    if (!canRegister) return;
+
+    try {
+      setLoading(true);
+      setError("");
+      setSuccess("");
+
+      const data = await apiPost("/auth/register", {
+        collegeId: cleanId,
+        role,
+        password,
+      });
+
+      setSuccess(data.message || "Compte créé avec succès");
+
+      setTimeout(() => {
+        router.push("/login");
+      }, 1200);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Erreur lors de l'inscription"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <div className="signupLayout">
-      
-      <div className="signupLeft">
-        <Link href="/" className="signupBrand">
+    <div className="authLayout">
+      <div className="authLeft">
+        <Link href="/" className="authBrand">
           Covoiturage
         </Link>
 
-        <h1>Rejoignez la plateforme de covoiturage.</h1>
-        <p className="signupSubtitle">
-          Créez votre profil en quelques secondes avec votre ID collège, puis commencez à
-          proposer ou réserver des trajets.
+        <h1>Créer un compte</h1>
+        <p className="authSubtitle">
+          Inscrivez-vous avec votre ID collège pour accéder à la plateforme de
+          covoiturage.
         </p>
 
-        <div className="signupSteps">
-          <div className="step">
-            <div className="stepNum">1</div>
-            <div>
-              <h3>Inscription</h3>
-              <p>Entrez votre ID collège et choisissez votre rôle.</p>
-            </div>
+        <div className="authInfo">
+          <div className="infoRow">
+            <span className="dot" />
+            Email généré automatiquement : <b>ID@collegelacite.ca</b>
           </div>
-
-          <div className="step">
-            <div className="stepNum">2</div>
-            <div>
-              <h3>Vérification</h3>
-              <p>Votre compte est validé selon les règles de la plateforme.</p>
-            </div>
+          <div className="infoRow">
+            <span className="dot" />
+            Choisissez votre rôle utilisateur
           </div>
-
-          <div className="step">
-            <div className="stepNum">3</div>
-            <div>
-              <h3>Démarrage</h3>
-              <p>Accédez au dashboard et utilisez les fonctionnalités.</p>
-            </div>
+          <div className="infoRow">
+            <span className="dot" />
+            Accès simple et sécurisé
           </div>
         </div>
       </div>
 
-      {/* RIGHT (form card) */}
-      <div className="signupRight">
-        <div className="signupCard">
-          <div className="signupCardHeader">
+      <div className="authRight">
+        <div className="authCard">
+          <div className="authCardHeader">
             <h2>Créer un profil</h2>
-            
           </div>
 
           <div className="form">
@@ -83,11 +106,11 @@ export default function RegisterPage() {
             <input
               type="text"
               value={collegeId}
-              onChange={(e) => setCollegeId(e.target.value)}
+              onChange={(e) => setCollegeId(sanitizeCollegeId(e.target.value))}
               placeholder="Ex: 2736164"
             />
 
-            <label>Email généré</label>
+            <label>Email</label>
             <input
               type="text"
               value={generatedEmail}
@@ -96,34 +119,48 @@ export default function RegisterPage() {
             />
 
             <label>Rôle</label>
-            <select value={role} onChange={(e) => setRole(e.target.value)}>
-              <option value="">-- Choisir un rôle --</option>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
               <option value="PASSAGER">Passager</option>
               <option value="CONDUCTEUR">Conducteur</option>
-              <option value="ADMIN">Administrateur</option>
+              <option value="ADMIN">Admin</option>
             </select>
 
             <label>Mot de passe</label>
-            <input type="password" placeholder="••••••••" />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Minimum 6 caractères"
+            />
 
-        {/*  redirection vers la page de connexion */}
+            <label>Confirmer le mot de passe</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Retapez le mot de passe"
+            />
+
+            {error && <p className="errorMessage">{error}</p>}
+            {success && <p className="successMessage">{success}</p>}
 
             <button
               className="btnPrimary"
               type="button"
-              disabled={!isFormValid}
-              onClick={() => (window.location.href = "/login")}
+              disabled={!canRegister || loading}
+              onClick={handleRegister}
             >
-              S’inscrire
+              {loading ? "Création..." : "Créer un compte"}
             </button>
 
-            <p className="signupTerms">
-              En vous inscrivant, vous acceptez les conditions d’utilisation de la plateforme.
-            </p>
-
-            <div className="signupAlt">
+            <div className="authAlt">
               <span>Déjà un compte ?</span>
-              <Link href="/login" className="btnSecondary">Se connecter</Link>
+              <Link href="/login" className="btnSecondary">
+                Se connecter
+              </Link>
             </div>
           </div>
         </div>

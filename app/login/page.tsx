@@ -2,35 +2,64 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { apiPost } from "@/lib/api";
+import { saveSession } from "@/lib/auth-client";
 
 // Nettoie l’ID : conserve uniquement les chiffres
 function sanitizeCollegeId(raw: string) {
   return raw.replace(/\D/g, "");
 }
 
-// Validation de l' ID collège, doit avoir exactement 7 chiffres
+// Validation de l'ID collège : exactement 7 chiffres
 function isValidCollegeId(id: string) {
   return /^\d{7}$/.test(id);
 }
 
 export default function LoginPage() {
+  const router = useRouter();
+
   const [collegeId, setCollegeId] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const cleanId = sanitizeCollegeId(collegeId);
 
-  // Génère automatiquement l’email à partir de l’ID 
+  // Génère automatiquement l’email à partir de l’ID
   const generatedEmail = useMemo(() => {
     if (!isValidCollegeId(cleanId)) return "";
     return `${cleanId}@collegelacite.ca`;
   }, [cleanId]);
 
-  // Verifié si l' ID et le mot de passe sont valide
+  // Vérifie si l'ID et le mot de passe sont valides
   const canLogin = isValidCollegeId(cleanId) && password.trim().length >= 4;
+
+  async function handleLogin() {
+    if (!canLogin) return;
+
+    try {
+      setLoading(true);
+      setError("");
+
+      const data = await apiPost("/auth/login", {
+        collegeId: cleanId,
+        password,
+      });
+
+      saveSession(data.token, data.user);
+      router.push("/dashboard");
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Erreur lors de la connexion"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="authLayout">
-      
       <div className="authLeft">
         <Link href="/" className="authBrand">
           Covoiturage
@@ -58,24 +87,22 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* RIGHT */}
       <div className="authRight">
         <div className="authCard">
           <div className="authCardHeader">
             <h2>Se connecter</h2>
-            
           </div>
 
           <div className="form">
-            <label>ID collège </label>
+            <label>ID collège</label>
             <input
               type="text"
               value={collegeId}
-              onChange={(e) => setCollegeId(e.target.value)}
+              onChange={(e) => setCollegeId(sanitizeCollegeId(e.target.value))}
               placeholder="Ex: 2736164"
             />
 
-            <label>Email </label>
+            <label>Email</label>
             <input
               type="text"
               value={generatedEmail}
@@ -91,13 +118,15 @@ export default function LoginPage() {
               placeholder="••••••••"
             />
 
+            {error && <p className="errorMessage">{error}</p>}
+
             <button
               className="btnPrimary"
               type="button"
-              disabled={!canLogin}
-              onClick={() => (window.location.href = "/dashboard")}
+              disabled={!canLogin || loading}
+              onClick={handleLogin}
             >
-              Se connecter
+              {loading ? "Connexion..." : "Se connecter"}
             </button>
 
             <div className="authAlt">

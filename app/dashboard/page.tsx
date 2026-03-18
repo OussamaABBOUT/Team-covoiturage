@@ -1,64 +1,103 @@
+"use client";
+
 import Link from "next/link";
+import { getCurrentUser } from "@/lib/auth-client";
 
 export default function DashboardPage() {
- 
-  // données temporaires , 
-  const stats = {
-    tripsCreated: 2,
-    reservations: 3,
-    pending: 1,
-  };
+  const user = getCurrentUser();
+
+  if (!user) {
+    return (
+      <main className="dashboardPage">
+        <div className="dashboardHeader">
+          <h1>Dashboard</h1>
+          <p>Utilisateur non connecté.</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
-    <div className="container">
-      <div className="dashboardTop">
-        <div>
-          <h1>Dashboard</h1>
-          <p>
-            Vue rapide de votre activité 
-          </p>
-        </div>
-
-          {/* Navigation rapide */}
-        <div>
-          <Link href="/register" className="btnSecondary">Créer profil</Link>
-          <Link href="/login" className="btnSecondary">Connexion</Link>
-        </div>
+    <main className="dashboardPage">
+      <div className="dashboardHeader">
+        <h1>Bienvenue</h1>
+        <p>
+          Connecté en tant que <strong>{user.email}</strong>
+        </p>
+        <span className="roleBadge">{user.role}</span>
       </div>
 
-        {/* Statistiques principales */}
-      <div className="kpiGrid">
-        <div className="kpi">
-          <div className="num">{stats.tripsCreated}</div>
-          <div className="label">Trajets proposés</div>
-        </div>
-        <div className="kpi">
-          <div className="num">{stats.reservations}</div>
-          <div className="label">Réservations</div>
-        </div>
-        <div className="kpi">
-          <div className="num">{stats.pending}</div>
-          <div className="label">En attente</div>
-        </div>
-      </div>
+      {user.role === "PASSAGER" && (
+        <section className="dashboardGrid">
+          <Link href="/trips" className="dashboardCard">
+            <h2>Rechercher un trajet</h2>
+            <p>Trouvez un trajet disponible selon votre destination et la date.</p>
+          </Link>
 
-      <div className="actionsGrid">
-        <div className="actionCard">
-          <h3>Proposer un trajet</h3>
-          <p>Créez un trajet (départ, arrivée, date, places).</p>
-          <Link href="#" className="btnPrimary">Créer un trajet</Link>
-          
-        </div>
+          <Link href="/my-reservations" className="dashboardCard">
+            <h2>Mes réservations</h2>
+            <p>Consultez vos demandes de réservation et leur statut.</p>
+          </Link>
 
-        <div className="actionCard">
-          <h3>Rechercher un trajet</h3>
-          <p>Trouvez un trajet disponible et faites une réservation.</p>
-          <Link href="#" className="btnPrimary">Rechercher</Link>
-         
-        </div>
-      </div>
+          <Link href="/history" className="dashboardCard">
+            <h2>Historique</h2>
+            <p>Consultez vos trajets passés en tant que passager.</p>
+          </Link>
 
-      
-    </div>
+          <Link href="/profile" className="dashboardCard">
+            <h2>Mon profil</h2>
+            <p>Consultez et modifiez vos informations personnelles.</p>
+          </Link>
+        </section>
+      )}
+
+      {user.role === "CONDUCTEUR" && (
+        <section className="dashboardGrid">
+          <Link href="/create-trip" className="dashboardCard">
+            <h2>Proposer un trajet</h2>
+            <p>Créez un nouveau trajet avec départ, destination, date et places.</p>
+          </Link>
+
+          <Link href="/my-trips" className="dashboardCard">
+            <h2>Mes trajets</h2>
+            <p>Consultez vos trajets publiés et les demandes reçues.</p>
+          </Link>
+
+          <Link href="/history" className="dashboardCard">
+            <h2>Historique</h2>
+            <p>Consultez vos anciens trajets en tant que conducteur.</p>
+          </Link>
+
+          <Link href="/profile" className="dashboardCard">
+            <h2>Mon profil</h2>
+            <p>Gérez vos informations et votre compte.</p>
+          </Link>
+        </section>
+      )}
+
+      {user.role === "ADMIN" && (
+        <section className="dashboardGrid">
+          <Link href="/admin" className="dashboardCard">
+            <h2>Administration</h2>
+            <p>Consultez les statistiques et gérez les utilisateurs.</p>
+          </Link>
+
+          <Link href="/trips" className="dashboardCard">
+            <h2>Voir les trajets</h2>
+            <p>Consultez les trajets disponibles sur la plateforme.</p>
+          </Link>
+
+          <Link href="/history" className="dashboardCard">
+            <h2>Historique</h2>
+            <p>Accédez aux données utiles pour la supervision.</p>
+          </Link>
+
+          <Link href="/profile" className="dashboardCard">
+            <h2>Mon profil</h2>
+            <p>Consultez les informations de votre compte administrateur.</p>
+          </Link>
+        </section>
+      )}
+    </main>
   );
 }
