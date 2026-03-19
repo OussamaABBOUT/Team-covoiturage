@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiPost } from "@/lib/api";
+import { getCurrentUser } from "@/lib/auth-client";
 
 function sanitizeCollegeId(raw: string) {
   return raw.replace(/\D/g, "");
@@ -15,6 +16,13 @@ function isValidCollegeId(id: string) {
 
 export default function RegisterPage() {
   const router = useRouter();
+
+  const existingUser =
+    typeof window !== "undefined" ? getCurrentUser() : null;
+
+  if (existingUser) {
+    router.push("/dashboard");
+  }
 
   const [collegeId, setCollegeId] = useState("");
   const [role, setRole] = useState("PASSAGER");
@@ -79,20 +87,6 @@ export default function RegisterPage() {
           covoiturage.
         </p>
 
-        <div className="authInfo">
-          <div className="infoRow">
-            <span className="dot" />
-            Email généré automatiquement : <b>ID@collegelacite.ca</b>
-          </div>
-          <div className="infoRow">
-            <span className="dot" />
-            Choisissez votre rôle utilisateur
-          </div>
-          <div className="infoRow">
-            <span className="dot" />
-            Accès simple et sécurisé
-          </div>
-        </div>
       </div>
 
       <div className="authRight">
