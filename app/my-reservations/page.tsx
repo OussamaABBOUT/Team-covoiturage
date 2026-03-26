@@ -1,22 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { apiGet } from "@/lib/api";
+import { apiGet, apiPatch } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth-client";
+
+type ReservationStatus = "PENDING" | "ACCEPTED" | "REFUSED" | "CANCELLED";
+
+type Trip = {
+  id: number;
+  departure: string;
+  destination: string;
+  date: string;
+  time?: string;
+  price?: number;
+};
 
 type Reservation = {
   id: number;
-  status: string;
+  status: ReservationStatus;
   createdAt?: string;
-  trip?: {
-    id: number;
-    departure: string;
-    destination: string;
-    date: string;
-    time?: string;
-    price?: number;
-  };
+  trip?: Trip;
 };
 
 export default function MyReservationsPage() {
@@ -26,6 +30,24 @@ export default function MyReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const loadReservations = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const data = await apiGet("/my-reservations");
+      setReservations(Array.isArray(data) ? (data as Reservation[]) : []);
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Erreur lors du chargement des réservations"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -41,30 +63,47 @@ export default function MyReservationsPage() {
     }
 
     setUserChecked(true);
-    loadReservations();
   }, [router]);
 
-  async function loadReservations() {
+  useEffect(() => {
+    if (userChecked) {
+      loadReservations();
+    }
+  }, [userChecked, loadReservations]);
+
+  async function cancelReservation(reservationId: number) {
     try {
-      setLoading(true);
       setError("");
 
-      const data = await apiGet("/my-reservations");
-      setReservations(Array.isArray(data) ? data : data.reservations || []);
-    } catch (err) {
+      await apiPatch(`/reservations/${reservationId}`, {
+        status: "CANCELLED",
+      });
+
+      setReservations((prevReservations) =>
+        prevReservations.filter(
+          (reservation) => reservation.id !== reservationId
+        )
+      );
+    } catch (err: unknown) {
       setError(
         err instanceof Error
           ? err.message
-          : "Erreur lors du chargement des réservations"
+          : "Erreur lors de l'annulation de la réservation"
       );
-    } finally {
-      setLoading(false);
     }
   }
 
   if (!userChecked) {
-    return <main className="page"><p>Chargement...</p></main>;
+    return (
+      <main className="page">
+        <p>Chargement...</p>
+      </main>
+    );
   }
+
+  const visibleReservations = reservations.filter(
+    (reservation) => reservation.status !== "CANCELLED"
+  );
 
   return (
     <main className="page">
@@ -78,11 +117,11 @@ export default function MyReservationsPage() {
       <section className="listSection">
         {loading ? (
           <p>Chargement des réservations...</p>
-        ) : reservations.length === 0 ? (
+        ) : visibleReservations.length === 0 ? (
           <p>Aucune réservation trouvée.</p>
         ) : (
           <div className="cardGrid">
-            {reservations.map((reservation) => (
+            {visibleReservations.map((reservation) => (
               <div key={reservation.id} className="dashboardCard">
                 <h2>
                   {reservation.trip
@@ -118,6 +157,15 @@ export default function MyReservationsPage() {
                     <strong>Demandée le :</strong>{" "}
                     {new Date(reservation.createdAt).toLocaleDateString("fr-CA")}
                   </p>
+                )}
+
+                {reservation.status !== "REFUSED" && (
+                  <button
+                    className="btnSecondary"
+                    onClick={() => cancelReservation(reservation.id)}
+                  >
+                    Annuler la réservation
+                  </button>
                 )}
               </div>
             ))}

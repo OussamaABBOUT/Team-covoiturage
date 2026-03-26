@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { getCurrentUser } from "@/lib/auth-client";
+import { useAuthUser } from "@/lib/auth-client";
 
 export default function DashboardPage() {
-  const user = getCurrentUser();
+  const user = useAuthUser();
 
   if (!user) {
     return (
@@ -45,16 +45,6 @@ export default function DashboardPage() {
               <p>Consultez les trajets que vous avez publiés.</p>
             </Link>
 
-            <Link href="/my-trips" className="dashboardCard">
-              <h2>Annuler un trajet</h2>
-              <p>Annulez un trajet déjà publié.</p>
-            </Link>
-
-            <Link href="/my-trips" className="dashboardCard">
-              <h2>Changer un trajet</h2>
-              <p>Modifiez un trajet publié.</p>
-            </Link>
-
             <Link href="/history" className="dashboardCard">
               <h2>Historique de mes trajets</h2>
               <p>Consultez l’historique de vos trajets.</p>
@@ -93,10 +83,6 @@ export default function DashboardPage() {
               <p>Consultez les données globales d’utilisation.</p>
             </Link>
 
-            <Link href="/admin" className="dashboardCard">
-              <h2>Statistiques générales</h2>
-              <p>Nombre d’utilisateurs, trajets et activité globale.</p>
-            </Link>
           </>
         )}
       </section>

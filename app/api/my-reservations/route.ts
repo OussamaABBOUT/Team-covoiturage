@@ -30,6 +30,8 @@ export async function GET(req: Request) {
 
     return NextResponse.json(reservations);
   } catch (error) {
+    console.error("Erreur API /my-reservations :", error);
+
     return NextResponse.json(
       { error: "Erreur lors de la récupération des réservations" },
       { status: 500 }

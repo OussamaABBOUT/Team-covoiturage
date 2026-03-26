@@ -19,15 +19,16 @@ model User {
 }
 
 model Trip {
-  id             Int           @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   departure      String
   destination    String
   date           DateTime
   seats          Int
   availableSeats Int
+  status         TripStatus @default(ACTIVE)
 
   driverId       Int
-  driver         User          @relation("DriverTrips", fields: [driverId], references: [id])
+  driver         User       @relation("DriverTrips", fields: [driverId], references: [id])
 
   reservations   Reservation[]
 }
@@ -56,4 +57,10 @@ enum ReservationStatus {
   PENDING
   ACCEPTED
   REFUSED
+  CANCELLED
+}
+
+enum TripStatus {
+  ACTIVE
+  CANCELLED
 }

@@ -1,91 +1,70 @@
 import { NextResponse } from "next/server";
+import { ReservationStatus, TripStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 
-export async function PATCH(
-  req: Request,
-  context: { params: { id: string } }
-) {
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
+
+export async function PATCH(req: Request, { params }: RouteContext) {
   try {
     const user = verifyToken(req);
-    const tripId = Number(context.params.id);
+    const { id } = await params;
+    const tripId = Number(id);
     const body = await req.json();
 
     if (Number.isNaN(tripId)) {
-      return NextResponse.json(
-        { error: "ID trajet invalide" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "ID invalide" }, { status: 400 });
     }
 
     const trip = await prisma.trip.findUnique({
       where: { id: tripId },
     });
 
+    // si le trajet n'existe plus ou n'est pas trouvé, on ne casse pas l'UI
     if (!trip) {
-      return NextResponse.json(
-        { error: "Trajet introuvable" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: true });
     }
 
     if (trip.driverId !== user.id && user.role !== "ADMIN") {
-      return NextResponse.json(
-        { error: "Accès refusé" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
     }
 
-    const updateData: {
-      departure?: string;
-      destination?: string;
-      date?: Date;
-      seats?: number;
-      availableSeats?: number;
-      status?: "ACTIVE" | "CANCELLED";
-    } = {};
-
-    if (body.departure) updateData.departure = body.departure;
-    if (body.destination) updateData.destination = body.destination;
-    if (body.date) updateData.date = new Date(body.date);
-
-    if (body.seats) {
-      const seatsNumber = Number(body.seats);
-
-      if (Number.isNaN(seatsNumber) || seatsNumber <= 0) {
-        return NextResponse.json(
-          { error: "Nombre de places invalide" },
-          { status: 400 }
-        );
-      }
-
-      updateData.seats = seatsNumber;
-      updateData.availableSeats = seatsNumber;
+    
+    if (trip.status === TripStatus.CANCELLED) {
+      return NextResponse.json({ success: true });
     }
 
-    if (body.status) {
-      if (!["ACTIVE", "CANCELLED"].includes(body.status)) {
-        return NextResponse.json(
-          { error: "Statut invalide" },
-          { status: 400 }
-        );
-      }
+    if (body.status === "CANCELLED") {
+      await prisma.reservation.updateMany({
+        where: {
+          tripId,
+          status: {
+            in: [ReservationStatus.PENDING, ReservationStatus.ACCEPTED],
+          },
+        },
+        data: {
+          status: ReservationStatus.CANCELLED,
+        },
+      });
 
-      updateData.status = body.status;
+      await prisma.trip.update({
+        where: { id: tripId },
+        data: {
+          status: TripStatus.CANCELLED,
+        },
+      });
+
+      return NextResponse.json({ success: true });
     }
 
-    const updatedTrip = await prisma.trip.update({
-      where: { id: tripId },
-      data: updateData,
-    });
-
-    return NextResponse.json({
-      message: "Trajet mis à jour avec succès",
-      trip: updatedTrip,
-    });
+    return NextResponse.json({ success: true });
   } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
-      { error: "Erreur lors de la mise à jour du trajet" },
+      { error: "Erreur serveur" },
       { status: 500 }
     );
   }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { TripStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 
@@ -23,7 +24,10 @@ export async function GET(req: Request) {
         gte: Date;
         lt: Date;
       };
-    } = {};
+      status: TripStatus;
+    } = {
+      status: TripStatus.ACTIVE,
+    };
 
     if (departure) {
       whereClause.departure = {
@@ -68,6 +72,8 @@ export async function GET(req: Request) {
 
     return NextResponse.json(trips);
   } catch (error) {
+    console.error("Erreur API /trips GET :", error);
+
     return NextResponse.json(
       { error: "Erreur lors de la récupération des trajets" },
       { status: 500 }
@@ -111,6 +117,7 @@ export async function POST(req: Request) {
         date: new Date(date),
         seats: seatsNumber,
         availableSeats: seatsNumber,
+        status: TripStatus.ACTIVE,
         driverId: user.id,
       },
     });
@@ -123,6 +130,8 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error) {
+    console.error("Erreur API /trips POST :", error);
+
     return NextResponse.json(
       { error: "Erreur lors de la création du trajet" },
       { status: 500 }

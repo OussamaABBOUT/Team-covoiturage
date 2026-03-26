@@ -2,13 +2,15 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 
-export async function PATCH(
-  req: Request,
-  context: { params: { id: string } }
-) {
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
+
+export async function PATCH(req: Request, { params }: RouteContext) {
   try {
     const user = verifyToken(req);
-    const reservationId = Number(context.params.id);
+    const { id } = await params;
+    const reservationId = Number(id);
     const { status } = await req.json();
 
     if (Number.isNaN(reservationId)) {
@@ -18,7 +20,7 @@ export async function PATCH(
       );
     }
 
-    if (!["ACCEPTED", "REFUSED"].includes(status)) {
+    if (!["ACCEPTED", "REFUSED", "CANCELLED"].includes(status)) {
       return NextResponse.json(
         { error: "Statut invalide" },
         { status: 400 }
@@ -45,58 +47,69 @@ export async function PATCH(
       );
     }
 
-    if (reservation.trip.driverId !== user.id) {
+    const isDriver = reservation.trip.driverId === user.id;
+    const isPassenger = reservation.passengerId === user.id;
+    const isAdmin = user.role === "ADMIN";
+
+    if (!isDriver && !isPassenger && !isAdmin) {
       return NextResponse.json(
         { error: "Accès refusé" },
         { status: 403 }
       );
     }
 
-    if (reservation.status === status) {
+    if (isPassenger && status !== "CANCELLED" && !isAdmin) {
       return NextResponse.json(
-        { error: "La réservation a déjà ce statut" },
-        { status: 400 }
+        { error: "Le passager peut seulement annuler" },
+        { status: 403 }
       );
     }
 
     if (
-      status === "ACCEPTED" &&
-      reservation.status !== "ACCEPTED" &&
-      reservation.trip.availableSeats <= 0
+      isDriver &&
+      !["ACCEPTED", "REFUSED", "CANCELLED"].includes(status) &&
+      !isAdmin
     ) {
       return NextResponse.json(
-        { error: "Aucune place disponible" },
+        { error: "Le conducteur peut accepter, refuser ou annuler" },
+        { status: 403 }
+      );
+    }
+
+    if (reservation.status === status) {
+      return NextResponse.json({
+        message: "Déjà dans cet état",
+        reservation,
+      });
+    }
+
+    if (status === "ACCEPTED" && reservation.trip.availableSeats <= 0) {
+      return NextResponse.json(
+        { error: "Plus de places disponibles" },
         { status: 400 }
       );
     }
 
-    const updatedReservation = await prisma.$transaction(async (tx: typeof prisma) => {
+    const updatedReservation = await prisma.$transaction(async (tx) => {
       const updated = await tx.reservation.update({
         where: { id: reservationId },
-        data: {
-          status,
-        },
+        data: { status },
       });
 
       if (reservation.status === "PENDING" && status === "ACCEPTED") {
         await tx.trip.update({
           where: { id: reservation.trip.id },
-          data: {
-            availableSeats: {
-              decrement: 1,
-            },
-          },
+          data: { availableSeats: { decrement: 1 } },
         });
       }
 
-      if (reservation.status === "ACCEPTED" && status === "REFUSED") {
+      if (
+        reservation.status === "ACCEPTED" &&
+        (status === "REFUSED" || status === "CANCELLED")
+      ) {
         await tx.trip.update({
           where: { id: reservation.trip.id },
-          data: {
-            availableSeats: {
-              increment: 1,
-            },
-          },
+          data: { availableSeats: { increment: 1 } },
         });
       }
 
@@ -104,13 +117,10 @@ export async function PATCH(
     });
 
     return NextResponse.json({
-      message:
-        status === "ACCEPTED"
-          ? "Réservation acceptée avec succès"
-          : "Réservation refusée avec succès",
+      message: "Réservation mise à jour",
       reservation: updatedReservation,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Erreur lors de la mise à jour de la réservation" },
       { status: 500 }

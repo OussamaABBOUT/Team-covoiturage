@@ -1,16 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiGet, apiPatch } from "@/lib/api";
+
+type Passenger = {
+  id: number;
+  email: string;
+  role: "PASSAGER" | "CONDUCTEUR" | "ADMIN";
+};
+
+type ReservationStatus = "PENDING" | "ACCEPTED" | "REFUSED" | "CANCELLED";
+type TripStatus = "ACTIVE" | "CANCELLED";
 
 type Reservation = {
   id: number;
-  status: "PENDING" | "ACCEPTED" | "REFUSED";
-  passenger: {
-    id: number;
-    email: string;
-    role: string;
-  };
+  status: ReservationStatus;
+  passenger: Passenger;
 };
 
 type Trip = {
@@ -20,49 +25,57 @@ type Trip = {
   date: string;
   availableSeats: number;
   seats: number;
-  status?: "ACTIVE" | "CANCELLED";
+  status?: TripStatus;
   reservations: Reservation[];
+
 };
 
 export default function MyTripsPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
-  async function loadTrips() {
+  const loadTrips = useCallback(async () => {
     try {
       setError("");
       const data = await apiGet("/my-trips");
-      setTrips(data);
-    } catch (err) {
+      setTrips(Array.isArray(data) ? (data as Trip[]) : []);
+    } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Erreur");
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   async function updateReservation(
     reservationId: number,
-    status: "ACCEPTED" | "REFUSED"
+    status: ReservationStatus
   ) {
     try {
       await apiPatch(`/reservations/${reservationId}`, { status });
       await loadTrips();
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Erreur");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Erreur";
+      alert(message);
     }
   }
 
   async function cancelTrip(tripId: number) {
+    // suppression immédiate de l'écran
+    setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== tripId));
+  
     try {
       await apiPatch(`/trips/${tripId}`, { status: "CANCELLED" });
-      await loadTrips();
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Erreur");
+    } catch{
+      
     }
   }
 
   async function editTrip(trip: Trip) {
+    if (trip.status === "CANCELLED") {
+      return;
+    }
+
     const departure = prompt("Nouveau départ :", trip.departure);
     if (!departure) return;
 
@@ -75,39 +88,16 @@ export default function MyTripsPage() {
         destination,
       });
       await loadTrips();
-    } catch (err) {
+    } catch (err: unknown) {
       alert(err instanceof Error ? err.message : "Erreur");
     }
   }
 
   useEffect(() => {
-    let isMounted = true;
+    loadTrips();
+  }, [loadTrips]);
 
-    async function fetchTrips() {
-      try {
-        const data = await apiGet("/my-trips");
-
-        if (isMounted) {
-          setTrips(data);
-          setError("");
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError(err instanceof Error ? err.message : "Erreur");
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    }
-
-    fetchTrips();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const visibleTrips = trips.filter((trip) => trip.status !== "CANCELLED");
 
   return (
     <main className="pageContainer">
@@ -119,81 +109,105 @@ export default function MyTripsPage() {
       {loading && <p>Chargement...</p>}
       {error && <p className="errorMessage">{error}</p>}
 
+      {!loading && !error && visibleTrips.length === 0 && (
+        <p>Aucun trajet trouvé.</p>
+      )}
+
       {!loading &&
         !error &&
-        trips.map((trip) => (
-          <div key={trip.id} className="resultCard">
-            <h3>
-              {trip.departure} → {trip.destination}
-            </h3>
-            <p>Date : {new Date(trip.date).toLocaleString()}</p>
-            <p>Places restantes : {trip.availableSeats}</p>
-            <p>Statut : {trip.status || "ACTIVE"}</p>
+        visibleTrips.map((trip) => {
+          const visibleReservations = trip.reservations.filter(
+            (reservation) => reservation.status !== "CANCELLED"
+          );
 
-            <div
-              style={{
-                display: "flex",
-                gap: "10px",
-                marginBottom: "14px",
-                flexWrap: "wrap",
-              }}
-            >
-              <button className="btnPrimary" onClick={() => editTrip(trip)}>
-                Modifier
-              </button>
+          return (
+            <div key={trip.id} className="resultCard">
+              <h3>
+                {trip.departure} → {trip.destination}
+              </h3>
+              <p>Date : {new Date(trip.date).toLocaleDateString("fr-CA")}</p>
+              <p>Places restantes : {trip.availableSeats}</p>
+              <p>Places totales : {trip.seats}</p>
+              <p>Statut : {trip.status || "ACTIVE"}</p>
 
-              <button
-                className="btnSecondary"
-                onClick={() => cancelTrip(trip.id)}
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  marginBottom: "14px",
+                  flexWrap: "wrap",
+                }}
               >
-                Annuler
-              </button>
-            </div>
+                <button className="btnPrimary" onClick={() => editTrip(trip)}>
+                  Modifier
+                </button>
 
-            <h4>Demandes reçues</h4>
-
-            {trip.reservations.length === 0 ? (
-              <p>Aucune réservation.</p>
-            ) : (
-              trip.reservations.map((reservation) => (
-                <div
-                  key={reservation.id}
-                  className="resultCard"
-                  style={{ marginTop: "10px" }}
+                <button
+                  className="btnSecondary"
+                  onClick={() => cancelTrip(trip.id)}
+                  disabled={trip.status === "CANCELLED"}
                 >
-                  <p>{reservation.passenger.email}</p>
-                  <p>Statut : {reservation.status}</p>
+                  {trip.status === "CANCELLED" ? "Trajet annulé" : "Annuler"}
+                </button>
+              </div>
 
+              <h4>Demandes reçues</h4>
+
+              {visibleReservations.length === 0 ? (
+                <p>Aucune réservation.</p>
+              ) : (
+                visibleReservations.map((reservation) => (
                   <div
-                    style={{
-                      display: "flex",
-                      gap: "10px",
-                      flexWrap: "wrap",
-                    }}
+                    key={reservation.id}
+                    className="resultCard"
+                    style={{ marginTop: "10px" }}
                   >
-                    <button
-                      className="btnPrimary"
-                      onClick={() =>
-                        updateReservation(reservation.id, "ACCEPTED")
-                      }
-                    >
-                      Accepter
-                    </button>
+                    <p>{reservation.passenger.email}</p>
+                    <p>Statut : {reservation.status}</p>
 
-                    <button
-                      className="btnSecondary"
-                      onClick={() =>
-                        updateReservation(reservation.id, "REFUSED")
-                      }
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "10px",
+                        flexWrap: "wrap",
+                      }}
                     >
-                      Refuser
-                    </button>
+                      <button
+                        className="btnPrimary"
+                        onClick={() =>
+                          updateReservation(reservation.id, "ACCEPTED")
+                        }
+                        disabled={reservation.status === "ACCEPTED"}
+                      >
+                        Accepter
+                      </button>
+
+                      <button
+                        className="btnSecondary"
+                        onClick={() =>
+                          updateReservation(reservation.id, "REFUSED")
+                        }
+                        disabled={reservation.status === "REFUSED"}
+                      >
+                        Refuser
+                      </button>
+
+                      <button
+                        className="btnSecondary"
+                        onClick={() =>
+                          updateReservation(reservation.id, "CANCELLED")
+                        }
+                        disabled={reservation.status === "CANCELLED"}
+                      >
+                        Annuler
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))
-            )}
-          </div>
-        ))}
+                ))
+              )}
+            </div>
+          );
+        })}
     </main>
   );
 }

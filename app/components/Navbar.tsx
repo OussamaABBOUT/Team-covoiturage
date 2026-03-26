@@ -2,16 +2,15 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { clearSession, getCurrentUser } from "@/lib/auth-client";
+import { clearSession, useAuthUser } from "@/lib/auth-client";
 
 export default function Navbar() {
   const router = useRouter();
-  const user = getCurrentUser();
+  const user = useAuthUser();
 
   function handleLogout() {
     clearSession();
-    router.push("/login");
-    router.refresh();
+    router.replace("/login");
   }
 
   return (

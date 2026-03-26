@@ -15,19 +15,24 @@ function getAuthHeaders() {
   };
 }
 
+async function parseResponse(res: Response) {
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Erreur API");
+  }
+
+  return data;
+}
+
 export async function apiGet(endpoint: string) {
   const res = await fetch(`${BASE_URL}${endpoint}`, {
     method: "GET",
     headers: getAuthHeaders(),
   });
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || "Erreur API");
-  }
-
-  return data;
+  return parseResponse(res);
 }
 
 export async function apiPost(endpoint: string, body: unknown) {
@@ -37,13 +42,7 @@ export async function apiPost(endpoint: string, body: unknown) {
     body: JSON.stringify(body),
   });
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || "Erreur API");
-  }
-
-  return data;
+  return parseResponse(res);
 }
 
 export async function apiPatch(endpoint: string, body: unknown) {
@@ -53,11 +52,5 @@ export async function apiPatch(endpoint: string, body: unknown) {
     body: JSON.stringify(body),
   });
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || "Erreur API");
-  }
-
-  return data;
+  return parseResponse(res);
 }
