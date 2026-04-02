@@ -81,8 +81,8 @@ export default function AdminPage() {
       <div className="pageHeader">
         <h1>Panneau d’administration</h1>
         <p>
-          Bienvenue <strong>{user.email}</strong>. Gérez les comptes,
-          surveillez l’activité et consultez les statistiques globales.
+          Bienvenue <strong>{user.email}</strong>. Supervisez la plateforme,
+          gérez les utilisateurs et suivez l’activité globale.
         </p>
       </div>
 
@@ -109,21 +109,21 @@ export default function AdminPage() {
             </div>
           </section>
 
-          <section className="dashboardGrid">
+          <div className="dashboardGrid">
             <div className="dashboardCard">
-              <h2>Utilisateurs</h2>
+              <h2>Comptes utilisateurs</h2>
               <p>Actifs : {stats.activeUsers}</p>
               <p>Inactifs : {stats.inactiveUsers}</p>
             </div>
 
             <div className="dashboardCard">
-              <h2>Trajets</h2>
+              <h2>État des trajets</h2>
               <p>Actifs : {stats.activeTrips}</p>
               <p>Annulés : {stats.cancelledTrips}</p>
             </div>
 
             <div className="dashboardCard">
-              <h2>Réservations</h2>
+              <h2>Activité réservations</h2>
               <p>En attente : {stats.pendingReservations}</p>
               <p>Acceptées : {stats.acceptedReservations}</p>
               <p>Refusées : {stats.refusedReservations}</p>
@@ -132,9 +132,9 @@ export default function AdminPage() {
 
             <Link href="/admin/users" className="dashboardCard">
               <h2>Gérer les utilisateurs</h2>
-              <p>Activer ou désactiver les comptes utilisateurs.</p>
+              <p>Activer, désactiver et consulter l’historique des comptes.</p>
             </Link>
-          </section>
+          </div>
         </>
       ) : null}
     </main>

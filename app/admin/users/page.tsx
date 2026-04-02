@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiGet, apiPatch } from "@/lib/api";
@@ -71,7 +72,10 @@ export default function AdminUsersPage() {
     <main className="pageContainer">
       <div className="pageHeader">
         <h1>Gestion des utilisateurs</h1>
-        <p>Activez ou désactivez les comptes utilisateurs.</p>
+        <p>
+          Cliquez sur un utilisateur pour voir son historique de trajets et de
+          réservations.
+        </p>
       </div>
 
       {loading && <p>Chargement...</p>}
@@ -81,23 +85,29 @@ export default function AdminUsersPage() {
         <p>Aucun utilisateur trouvé.</p>
       )}
 
-      {!loading &&
-        !error &&
-        users.map((user) => (
-          <div key={user.id} className="resultCard">
-            <h3>{user.email}</h3>
-            <p>ID collège : {user.collegeId}</p>
-            <p>Rôle : {user.role}</p>
-            <p>Statut : {user.isActive ? "Actif" : "Inactif"}</p>
+      {!loading && !error && (
+        <div className="cardGrid">
+          {users.map((user) => (
+            <div key={user.id} className="resultCard">
+              <Link href={`/admin/users/${user.id}`}>
+                <h3>{user.email}</h3>
+                <p>ID collège : {user.collegeId}</p>
+                <p>Rôle : {user.role}</p>
+                <p>Statut : {user.isActive ? "Actif" : "Inactif"}</p>
+              </Link>
 
-            <button
-              className={user.isActive ? "btnSecondary" : "btnPrimary"}
-              onClick={() => toggleUser(user.id, user.isActive)}
-            >
-              {user.isActive ? "Désactiver" : "Activer"}
-            </button>
-          </div>
-        ))}
+              <div style={{ marginTop: "16px" }}>
+                <button
+                  className={user.isActive ? "btnSecondary" : "btnPrimary"}
+                  onClick={() => toggleUser(user.id, user.isActive)}
+                >
+                  {user.isActive ? "Désactiver" : "Activer"}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </main>
   );
 }

@@ -31,21 +31,41 @@ export default function TripsPage() {
   const [destination, setDestination] = useState("");
   const [date, setDate] = useState("");
 
+  // ✅ CORRECTION DU useEffect (plus de warning)
   useEffect(() => {
-    const user = getCurrentUser();
+    async function init() {
+      const user = getCurrentUser();
 
-    if (!user) {
-      router.replace("/login");
-      return;
+      if (!user) {
+        router.replace("/login");
+        return;
+      }
+
+      if (user.role !== "PASSAGER" && user.role !== "ADMIN") {
+        router.replace("/dashboard");
+        return;
+      }
+
+      setUserChecked(true);
+
+      try {
+        setLoading(true);
+        setError("");
+
+        const data = await apiGet("/trips");
+        setTrips(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Erreur lors du chargement des trajets"
+        );
+      } finally {
+        setLoading(false);
+      }
     }
 
-    if (user.role !== "PASSAGER" && user.role !== "ADMIN") {
-      router.replace("/dashboard");
-      return;
-    }
-
-    setUserChecked(true);
-    loadTrips();
+    init();
   }, [router]);
 
   async function loadTrips() {
@@ -58,12 +78,19 @@ export default function TripsPage() {
       if (destination.trim()) params.append("destination", destination.trim());
       if (date) params.append("date", date);
 
-      const endpoint = params.toString() ? `/trips?${params.toString()}` : "/trips";
+      const endpoint = params.toString()
+        ? `/trips?${params.toString()}`
+        : "/trips";
+
       const data = await apiGet(endpoint);
 
       setTrips(Array.isArray(data) ? data : []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors du chargement des trajets");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Erreur lors du chargement des trajets"
+      );
     } finally {
       setLoading(false);
     }
@@ -78,10 +105,15 @@ export default function TripsPage() {
     try {
       setError("");
       await apiPost("/reservations", { tripId });
+
       alert("Réservation envoyée avec succès.");
       router.push("/my-reservations");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors de la réservation");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Erreur lors de la réservation"
+      );
     }
   }
 
@@ -100,6 +132,7 @@ export default function TripsPage() {
         <p>Trouvez un trajet disponible et envoyez une réservation.</p>
       </div>
 
+      {/* 🔍 FORMULAIRE */}
       <form onSubmit={handleSearch} className="formCard">
         <div className="formGroup">
           <label>Départ</label>
@@ -137,6 +170,7 @@ export default function TripsPage() {
 
       {error && <p className="errorMessage">{error}</p>}
 
+      {/* 📋 LISTE */}
       <section className="listSection">
         {loading ? (
           <p>Chargement des trajets...</p>
@@ -169,8 +203,11 @@ export default function TripsPage() {
                   </p>
                 )}
 
+                {/* ✅ BOUTON AMÉLIORÉ */}
                 <button
-                  className="btnPrimary"
+                  className={
+                    trip.availableSeats <= 0 ? "btnSecondary" : "btnPrimary"
+                  }
                   onClick={() => handleReserve(trip.id)}
                   disabled={trip.availableSeats <= 0}
                 >

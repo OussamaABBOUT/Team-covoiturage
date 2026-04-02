@@ -30,24 +30,24 @@ export default function DashboardPage() {
       <section className="dashboardGrid">
         <Link href="/profile" className="dashboardCard">
           <h2>Mon profil</h2>
-          <p>Consultez vos informations personnelles.</p>
+          <p>Consultez et gérez vos informations personnelles.</p>
         </Link>
 
         {user.role === "CONDUCTEUR" && (
           <>
             <Link href="/create-trip" className="dashboardCard">
               <h2>Proposer un trajet</h2>
-              <p>Créer un nouveau trajet.</p>
+              <p>Publiez un nouveau trajet rapidement.</p>
             </Link>
 
             <Link href="/my-trips" className="dashboardCard">
-              <h2>Voir mes trajets</h2>
-              <p>Consultez les trajets que vous avez publiés.</p>
+              <h2>Mes trajets</h2>
+              <p>Consultez, modifiez ou annulez vos trajets publiés.</p>
             </Link>
 
             <Link href="/history" className="dashboardCard">
-              <h2>Historique de mes trajets</h2>
-              <p>Consultez l’historique de vos trajets.</p>
+              <h2>Historique</h2>
+              <p>Consultez l’historique de vos trajets et activités.</p>
             </Link>
           </>
         )}
@@ -56,29 +56,27 @@ export default function DashboardPage() {
           <>
             <Link href="/trips" className="dashboardCard">
               <h2>Rechercher un trajet</h2>
-              <p>Trouvez un trajet disponible.</p>
+              <p>Trouvez un trajet disponible et envoyez une réservation.</p>
             </Link>
 
             <Link href="/my-reservations" className="dashboardCard">
-              <h2>Voir mes réservations</h2>
-              <p>Consultez vos demandes de réservation.</p>
+              <h2>Mes réservations</h2>
+              <p>Suivez toutes vos demandes de réservation.</p>
             </Link>
 
             <Link href="/history" className="dashboardCard">
-              <h2>Historique des réservations</h2>
-              <p>Consultez vos réservations passées.</p>
+              <h2>Historique</h2>
+              <p>Retrouvez vos réservations passées en un seul endroit.</p>
             </Link>
           </>
         )}
 
         {user.role === "ADMIN" && (
           <>
-           
             <Link href="/admin" className="dashboardCard">
-              <h2>Superviser la plateforme</h2>
-              <p>Consultez les données globales d’utilisation.</p>
-            </Link>
-
+              <h2>Administration</h2>
+              <p>Supervisez la plateforme et consultez les statistiques.</p>
+            </Link>          
           </>
         )}
       </section>

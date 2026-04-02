@@ -1,17 +1,13 @@
-"use client";
+  "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiPost } from "@/lib/api";
-import { getCurrentUser, saveSession } from "@/lib/auth-client";
+import { saveSession } from "@/lib/auth-client";
 
 function sanitizeCollegeId(raw: string) {
   return raw.replace(/\D/g, "");
-}
-
-function isValidCollegeId(id: string) {
-  return /^\d{7}$/.test(id);
 }
 
 export default function LoginPage() {
@@ -21,130 +17,107 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isCheckingSession, setIsCheckingSession] = useState(true);
 
-  const cleanId = sanitizeCollegeId(collegeId);
-
-  const generatedEmail = useMemo(() => {
-    if (!isValidCollegeId(cleanId)) return "";
-    return `${cleanId}@collegelacite.ca`;
-  }, [cleanId]);
-
-  const canLogin = isValidCollegeId(cleanId) && password.trim().length >= 4;
-
-  useEffect(() => {
-    const existingUser = getCurrentUser();
-
-    if (existingUser) {
-      router.replace("/dashboard");
-      return;
-    }
-
-    setIsCheckingSession(false);
-  }, [router]);
-
-  async function handleLogin() {
-    if (!canLogin) return;
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
 
     try {
       setLoading(true);
       setError("");
 
       const data = await apiPost("/auth/login", {
-        collegeId: cleanId,
+        collegeId: sanitizeCollegeId(collegeId),
         password,
       });
 
       saveSession(data.token, data.user);
-      router.replace("/dashboard");
-      router.refresh();
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Erreur lors de la connexion"
-      );
+      router.push("/dashboard");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Erreur de connexion");
     } finally {
       setLoading(false);
     }
   }
 
-  if (isCheckingSession) {
-    return (
-      <div className="authLayout">
-        <div className="authRight">
-          <div className="authCard">
-            <p>Chargement...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="authLayout">
+    <main className="authLayout">
       <div className="authLeft">
         <Link href="/" className="authBrand">
-          Covoiturage
+          Covoit<span className="navBrandAccent">Go</span>
         </Link>
 
-        <h1>Connexion</h1>
+        <h1>Accédez à votre espace</h1>
         <p className="authSubtitle">
-          Accédez à votre dashboard et gérez vos trajets. Entrez votre ID collège
-          et votre mot de passe.
+          Connectez-vous pour gérer vos trajets, vos réservations et votre
+          historique sur la plateforme de covoiturage.
         </p>
 
+        <div className="authInfo">
+          <div className="infoRow">
+            <span className="dot" />
+            <div>
+              <strong>Réservation rapide</strong>
+              <p>Trouvez ou proposez un trajet en quelques secondes.</p>
+            </div>
+          </div>
+
+          <div className="infoRow">
+            <span className="dot" />
+            <div>
+              <strong>Suivi simplifié</strong>
+              <p>Consultez vos trajets et réservations depuis votre dashboard.</p>
+            </div>
+          </div>
+
+          <div className="infoRow">
+            <span className="dot" />
+            <div>
+              <strong>Expérience moderne</strong>
+              <p>Une interface simple, claire et pensée pour aller vite.</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="authRight">
         <div className="authCard">
           <div className="authCardHeader">
-            <h2>Se connecter</h2>
+            <h2>Connexion</h2>
+            <p>Entrez vos informations pour continuer.</p>
           </div>
 
-          <div className="form">
+          <form className="form" onSubmit={handleLogin}>
             <label>ID collège</label>
             <input
               type="text"
+              placeholder="Ex: 2736164"
               value={collegeId}
               onChange={(e) => setCollegeId(sanitizeCollegeId(e.target.value))}
-              placeholder="Ex: 2736164"
-            />
-
-            <label>Email</label>
-            <input
-              type="text"
-              value={generatedEmail}
-              readOnly
-              placeholder="Ex: 2736164@collegelacite.ca"
             />
 
             <label>Mot de passe</label>
             <input
               type="password"
+              placeholder="Votre mot de passe"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
             />
 
             {error && <p className="errorMessage">{error}</p>}
 
-            <button
-              className="btnPrimary"
-              type="button"
-              disabled={!canLogin || loading}
-              onClick={handleLogin}
-            >
+            <button className="btnPrimary" type="submit" disabled={loading}>
               {loading ? "Connexion..." : "Se connecter"}
             </button>
+          </form>
 
-            <div className="authAlt">
-              <span>Pas encore de compte ?</span>
-              <Link href="/register" className="btnSecondary">
-                Créer un profil
-              </Link>
-            </div>
+          <div className="authAlt">
+            <span>Pas encore de compte ?</span>
+            <Link href="/register" className="navLink">
+              Créer un compte
+            </Link>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiPost } from "@/lib/api";
-import { getCurrentUser } from "@/lib/auth-client";
 
 function sanitizeCollegeId(raw: string) {
   return raw.replace(/\D/g, "");
@@ -17,18 +16,10 @@ function isValidCollegeId(id: string) {
 export default function RegisterPage() {
   const router = useRouter();
 
-  const existingUser =
-    typeof window !== "undefined" ? getCurrentUser() : null;
-
-  if (existingUser) {
-    router.push("/dashboard");
-  }
-
   const [collegeId, setCollegeId] = useState("");
   const [role, setRole] = useState("PASSAGER");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,11 +33,13 @@ export default function RegisterPage() {
 
   const canRegister =
     isValidCollegeId(cleanId) &&
-    password.trim().length >= 6 &&
-    confirmPassword.trim().length >= 6 &&
+    password.length >= 6 &&
+    confirmPassword.length >= 6 &&
     password === confirmPassword;
 
-  async function handleRegister() {
+  async function handleRegister(e: React.FormEvent) {
+    e.preventDefault();
+
     if (!canRegister) return;
 
     try {
@@ -65,7 +58,7 @@ export default function RegisterPage() {
       setTimeout(() => {
         router.push("/login");
       }, 1200);
-    } catch (err) {
+    } catch (err: unknown) {
       setError(
         err instanceof Error ? err.message : "Erreur lors de l'inscription"
       );
@@ -75,27 +68,53 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="authLayout">
+    <main className="authLayout">
       <div className="authLeft">
         <Link href="/" className="authBrand">
-          Covoiturage
+          Covoit<span className="navBrandAccent">Go</span>
         </Link>
 
-        <h1>Créer un compte</h1>
+        <h1>Créez votre compte</h1>
         <p className="authSubtitle">
-          Inscrivez-vous avec votre ID collège pour accéder à la plateforme de
-          covoiturage.
+          Rejoignez la plateforme pour rechercher des trajets, publier vos
+          déplacements et gérer vos réservations facilement.
         </p>
 
+        <div className="authInfo">
+          <div className="infoRow">
+            <span className="dot" />
+            <div>
+              <strong>Inscription rapide</strong>
+              <p>Créez votre profil en quelques étapes simples.</p>
+            </div>
+          </div>
+
+          <div className="infoRow">
+            <span className="dot" />
+            <div>
+              <strong>Choix du rôle</strong>
+              <p>Inscrivez-vous comme passager, conducteur ou administrateur.</p>
+            </div>
+          </div>
+
+          <div className="infoRow">
+            <span className="dot" />
+            <div>
+              <strong>Accès à votre dashboard</strong>
+              <p>Suivez toute votre activité depuis un espace personnel moderne.</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="authRight">
         <div className="authCard">
           <div className="authCardHeader">
             <h2>Créer un profil</h2>
+            <p>Remplissez les informations ci-dessous.</p>
           </div>
 
-          <div className="form">
+          <form className="form" onSubmit={handleRegister}>
             <label>ID collège</label>
             <input
               type="text"
@@ -104,7 +123,7 @@ export default function RegisterPage() {
               placeholder="Ex: 2736164"
             />
 
-            <label>Email</label>
+            <label>Email généré</label>
             <input
               type="text"
               value={generatedEmail}
@@ -113,10 +132,7 @@ export default function RegisterPage() {
             />
 
             <label>Rôle</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-            >
+            <select value={role} onChange={(e) => setRole(e.target.value)}>
               <option value="PASSAGER">Passager</option>
               <option value="CONDUCTEUR">Conducteur</option>
               <option value="ADMIN">Admin</option>
@@ -143,22 +159,21 @@ export default function RegisterPage() {
 
             <button
               className="btnPrimary"
-              type="button"
+              type="submit"
               disabled={!canRegister || loading}
-              onClick={handleRegister}
             >
               {loading ? "Création..." : "Créer un compte"}
             </button>
+          </form>
 
-            <div className="authAlt">
-              <span>Déjà un compte ?</span>
-              <Link href="/login" className="btnSecondary">
-                Se connecter
-              </Link>
-            </div>
+          <div className="authAlt">
+            <span>Vous avez déjà un compte ?</span>
+            <Link href="/login" className="navLink">
+              Se connecter
+            </Link>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
