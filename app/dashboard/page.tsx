@@ -73,11 +73,7 @@ export default function DashboardPage() {
 
         {user.role === "ADMIN" && (
           <>
-            <Link href="/admin/users" className="dashboardCard">
-              <h2>Gérer les utilisateurs</h2>
-              <p>Activer ou désactiver les comptes utilisateurs.</p>
-            </Link>
-
+           
             <Link href="/admin" className="dashboardCard">
               <h2>Superviser la plateforme</h2>
               <p>Consultez les données globales d’utilisation.</p>

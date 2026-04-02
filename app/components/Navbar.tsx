@@ -17,11 +17,19 @@ export default function Navbar() {
     <nav className="nav">
       <div className="navLeft">
         <Link href="/" className="navBrand">
-          Covoiturage
+          Covoit<span className="navBrandAccent">Go</span>
         </Link>
       </div>
 
       <div className="navRight">
+        <Link href="/" className="navLink">
+          Accueil
+        </Link>
+
+        <Link href="/trips" className="navLink">
+          Trajets
+        </Link>
+
         {!user ? (
           <>
             <Link href="/login" className="btnSecondary">
@@ -37,7 +45,7 @@ export default function Navbar() {
               Dashboard
             </Link>
             <button className="btnPrimary" onClick={handleLogout}>
-              Se déconnecter
+              Déconnexion
             </button>
           </>
         )}

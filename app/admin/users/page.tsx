@@ -1,74 +1,71 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { apiGet, apiPatch } from "@/lib/api";
+import { getCurrentUser } from "@/lib/auth-client";
 
 type UserItem = {
   id: number;
   collegeId: string;
   email: string;
-  role: string;
+  role: "PASSAGER" | "CONDUCTEUR" | "ADMIN";
   isActive: boolean;
 };
 
 export default function AdminUsersPage() {
+  const router = useRouter();
   const [users, setUsers] = useState<UserItem[]>([]);
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  async function loadUsers() {
+  const loadUsers = useCallback(async () => {
     try {
       setError("");
       const data = await apiGet("/admin/users");
-      setUsers(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur utilisateurs");
+      setUsers(Array.isArray(data) ? data : []);
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Erreur lors du chargement des utilisateurs"
+      );
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    const user = getCurrentUser();
+
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
+    if (user.role !== "ADMIN") {
+      router.replace("/dashboard");
+      return;
+    }
+
+    loadUsers();
+  }, [router, loadUsers]);
 
   async function toggleUser(userId: number, isActive: boolean) {
     try {
-      await apiPatch("/admin/users", {
-        userId,
+      await apiPatch(`/admin/users/${userId}`, {
         isActive: !isActive,
       });
 
-      await loadUsers();
-    } catch (err) {
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === userId ? { ...user, isActive: !isActive } : user
+        )
+      );
+    } catch (err: unknown) {
       alert(err instanceof Error ? err.message : "Erreur");
     }
   }
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function fetchUsers() {
-      try {
-        const data = await apiGet("/admin/users");
-
-        if (isMounted) {
-          setUsers(data);
-          setError("");
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError(err instanceof Error ? err.message : "Erreur utilisateurs");
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    }
-
-    fetchUsers();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   return (
     <main className="pageContainer">
@@ -80,25 +77,21 @@ export default function AdminUsersPage() {
       {loading && <p>Chargement...</p>}
       {error && <p className="errorMessage">{error}</p>}
 
+      {!loading && !error && users.length === 0 && (
+        <p>Aucun utilisateur trouvé.</p>
+      )}
+
       {!loading &&
         !error &&
         users.map((user) => (
           <div key={user.id} className="resultCard">
-            <p>
-              <strong>ID collège :</strong> {user.collegeId}
-            </p>
-            <p>
-              <strong>Email :</strong> {user.email}
-            </p>
-            <p>
-              <strong>Rôle :</strong> {user.role}
-            </p>
-            <p>
-              <strong>Statut :</strong> {user.isActive ? "Actif" : "Désactivé"}
-            </p>
+            <h3>{user.email}</h3>
+            <p>ID collège : {user.collegeId}</p>
+            <p>Rôle : {user.role}</p>
+            <p>Statut : {user.isActive ? "Actif" : "Inactif"}</p>
 
             <button
-              className="btnPrimary"
+              className={user.isActive ? "btnSecondary" : "btnPrimary"}
               onClick={() => toggleUser(user.id, user.isActive)}
             >
               {user.isActive ? "Désactiver" : "Activer"}

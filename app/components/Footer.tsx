@@ -1,7 +1,7 @@
 export default function Footer() {
-    return (
-      <footer className="footer">
-        <p>© 2026 Covoiturage — Tous droits réservés.</p>
-      </footer>
-    );
-  }
+  return (
+    <footer className="footer">
+      © 2026 CovoitGo — Plateforme de covoiturage moderne.
+    </footer>
+  );
+}
