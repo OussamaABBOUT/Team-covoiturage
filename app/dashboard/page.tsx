@@ -2,9 +2,32 @@
 
 import Link from "next/link";
 import { useAuthUser } from "@/lib/auth-client";
+import { apiPatch } from "@/lib/api";
 
 export default function DashboardPage() {
   const user = useAuthUser();
+
+  async function handleSwitchRole() {
+    try {
+      const res = await apiPatch("/profile/role", {});
+
+      const rawUser = localStorage.getItem("user");
+
+      if (rawUser) {
+        const parsedUser = JSON.parse(rawUser);
+        const updatedUser = {
+          ...parsedUser,
+          role: res.role,
+        };
+
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      }
+
+      window.location.reload();
+    } catch {
+      alert("Erreur lors du changement de rôle");
+    }
+  }
 
   if (!user) {
     return (
@@ -20,11 +43,32 @@ export default function DashboardPage() {
   return (
     <main className="dashboardPage">
       <div className="dashboardHeader">
-        <h1>Bienvenue sur votre dashboard</h1>
-        <p>
-          Connecté en tant que <strong>{user.email}</strong>
-        </p>
-        <span className="roleBadge">{user.role}</span>
+        <div className="headerLeft">
+          <h1>Bienvenue sur votre dashboard</h1>
+          <p>
+            Connecté en tant que <strong>{user.email}</strong>
+          </p>
+        </div>
+
+        <div className="headerRight">
+          <span className="roleBadge">{user.role}</span>
+
+          {(user.role === "PASSAGER" || user.role === "CONDUCTEUR") && (
+            <button
+              className={`roleSwitch ${
+                user.role === "CONDUCTEUR" ? "active" : ""
+              }`}
+              onClick={handleSwitchRole}
+              title="Changer de rôle"
+              aria-label="Changer de rôle"
+              type="button"
+            >
+              <span className="roleSwitchTrack">
+                <span className="roleSwitchThumb"></span>
+              </span>
+            </button>
+          )}
+        </div>
       </div>
 
       <section className="dashboardGrid">
@@ -72,12 +116,10 @@ export default function DashboardPage() {
         )}
 
         {user.role === "ADMIN" && (
-          <>
-            <Link href="/admin" className="dashboardCard">
-              <h2>Administration</h2>
-              <p>Supervisez la plateforme et consultez les statistiques.</p>
-            </Link>          
-          </>
+          <Link href="/admin" className="dashboardCard">
+            <h2>Administration</h2>
+            <p>Supervisez la plateforme et consultez les statistiques.</p>
+          </Link>
         )}
       </section>
     </main>

@@ -352,7 +352,7 @@ textarea {
 
 .roleBadge {
   display: inline-block;
-  margin-top: 12px;
+  margin-top: 2px;
   background: rgba(255, 59, 77, 0.12);
   color: #ffd6da;
   border: 1px solid rgba(255, 59, 77, 0.3);
@@ -707,3 +707,171 @@ textarea {
   );
 }
 
+
+/* structure carte */
+.cardWithAction {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+
+.smallBtn {
+  padding: 8px 14px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* responsive */
+@media (max-width: 600px) {
+  .cardWithAction {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .smallBtn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.switchBtn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background: #f3f4f6;
+  color: #111827;
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.switchBtn:hover {
+  background: #e5e7eb;
+}
+
+@media (max-width: 700px) {
+  .headerRight {
+    margin-top: 10px;
+  }
+}
+
+.iconBtn {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+  border-radius: 50%;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Switch stylé */
+.roleSwitch {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease;
+}
+
+.roleSwitch:active {
+  transform: scale(0.97);
+}
+
+.roleSwitchTrack {
+  position: relative;
+  width: 63px;
+  height: 36px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #23232d, #17171f);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.05),
+    0 10px 24px rgba(0, 0, 0, 0.28);
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  transition: all 0.3s ease;
+}
+
+.roleSwitchThumb {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff4b5c, #e62f43);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 900;
+  box-shadow: 0 6px 16px rgba(255, 59, 77, 0.35);
+  transform: translateX(0);
+  transition:
+    transform 0.35s ease,
+    background 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+/* Quand le rôle est CONDUCTEUR */
+.roleSwitch.active .roleSwitchTrack {
+  background: linear-gradient(135deg, rgba(255, 59, 77, 0.18), #17171f);
+  border-color: rgba(255, 59, 77, 0.28);
+}
+
+.roleSwitch.active .roleSwitchThumb {
+  transform: translateX(24px) rotate(180deg);
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.3);
+}
+
+.roleSwitch:hover .roleSwitchTrack {
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.05),
+    0 12px 28px rgba(0, 0, 0, 0.34);
+}
+
+@media (max-width: 700px) {
+  .headerRight {
+    margin-top: 10px;
+  }
+}
