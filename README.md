@@ -1,36 +1,156 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚗 Team Covoiturage
 
-## Getting Started
+Une application web de **covoiturage dédiée à la communauté de La Cité**, permettant aux étudiants et membres du personnel de proposer et réserver des trajets facilement.
 
-First, run the development server:
+---
+
+## 📌 Description
+
+**Team Covoiturage** est une plateforme moderne développée avec **Next.js** qui facilite le partage de trajets entre utilisateurs d’une même institution.
+
+L’objectif est de :
+
+* réduire les coûts de transport 💸
+* favoriser l’entraide entre étudiants 🤝
+* diminuer l’impact environnemental 🌱
+
+---
+
+## 🚀 Fonctionnalités
+
+* 🔐 Authentification (connexion / inscription)
+* 🏠 Tableau de bord utilisateur
+* 🚘 Publication de trajets
+* 🔍 Consultation des trajets disponibles
+* 👤 Gestion des utilisateurs
+* 📱 Interface responsive (adaptée mobile et desktop)
+
+---
+
+## 🛠️ Technologies utilisées
+
+* **Frontend** :
+
+  * Next.js (App Router)
+  * React
+  * TypeScript
+  * Tailwind CSS
+
+* **Outils** :
+
+  * ESLint
+  * PostCSS
+
+---
+
+## 📂 Structure du projet
+
+```
+team-covoiturage/
+│── app/
+│   ├── components/       # Composants réutilisables
+│   ├── dashboard/        # Interface utilisateur principale
+│   ├── login/            # Page de connexion
+│   ├── register/         # Page d'inscription
+│   ├── layout.tsx        # Layout global
+│   ├── page.tsx          # Page d'accueil
+│   └── globals.css       # Styles globaux
+│
+│── public/               # Fichiers statiques
+│── package.json          # Dépendances et scripts
+│── tsconfig.json         # Configuration TypeScript
+│── next.config.ts        # Configuration Next.js
+```
+
+---
+
+## ⚙️ Installation et lancement
+
+### 1. Cloner le projet
+
+```bash
+git clone https://github.com/OussamaABBOUT/team-covoiturage.git
+cd team-covoiturage
+```
+
+### 2. Installer les dépendances
+
+```bash
+npm install
+```
+
+### 3. Lancer le projet en mode développement
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 4. Accéder à l’application
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Ouvre ton navigateur à :
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+http://localhost:3000
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📦 Scripts disponibles
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run dev      # Lancer le serveur de développement
+npm run build    # Build du projet
+npm run start    # Lancer en production
+npm run lint     # Vérifier le code
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🔐 Configuration
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Si ton projet utilise des variables d’environnement (API, base de données, etc.), crée un fichier `.env.local` :
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```env
+NEXT_PUBLIC_API_URL=your_api_url_here
+```
+
+---
+
+## 👨‍💻 Auteur
+
+* **Oussama ABBOUT**
+* Projet réalisé dans le cadre académique à *La Cité*
+
+---
+
+## 📄 Licence
+
+Ce projet est à but éducatif.
+
+---
+
+## 💡 Améliorations futures
+
+* 💬 Système de messagerie entre utilisateurs
+* ⭐ Système de notation des conducteurs
+* 📍 Intégration de Google Maps
+* 🔔 Notifications en temps réel
+
+---
+
+## 🙌 Contribution
+
+Les contributions sont les bienvenues !
+
+1. Fork le projet
+2. Crée une branche (`feature/ma-feature`)
+3. Commit tes changements
+4. Push et ouvre une Pull Request
+
+---
+
+
+
+---
+
+✨ Merci d’utiliser **CovoitGo* !
