@@ -119,6 +119,8 @@ NEXT_PUBLIC_API_URL=your_api_url_here
 ## 👨‍💻 Auteur
 
 * **Oussama ABBOUT**
+* **Hillal Mohamed jad**
+* **Hammachin Rayane Lakhdar**
 * Projet réalisé dans le cadre académique à *La Cité*
 
 ---
